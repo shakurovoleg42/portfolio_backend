@@ -51,6 +51,7 @@ app.post("/portfolio", upload.array("images", 10), async (req, res) => {
   const images = req.files.map((file) => `/uploads/${file.filename}`); // Пути к загруженным файлам
 
   const portfolio = new Portfolio({
+    id,
     title,
     description,
     technologies: technologies.split(","), // Преобразуем строку в массив

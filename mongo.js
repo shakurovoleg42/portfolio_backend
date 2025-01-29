@@ -1,22 +1,11 @@
-// mongo.js
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
-// Подключение к MongoDB
-const connectDB = async () => {
-  try {
-    await mongoose.connect("mongodb://localhost:27017/portfolioDB", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Connected to MongoDB");
-  } catch (err) {
-    console.error("Error connecting to MongoDB:", err);
-    process.exit(1); // Завершить процесс с ошибкой
-  }
-};
-
-// Схема и модель для портфолио
 const portfolioSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    default: uuidv4,
+  },
   title: String,
   description: String,
   technologies: [String],
@@ -26,4 +15,4 @@ const portfolioSchema = new mongoose.Schema({
 
 const Portfolio = mongoose.model("Portfolio", portfolioSchema);
 
-module.exports = { connectDB, Portfolio };
+module.exports = Portfolio;
