@@ -108,13 +108,13 @@
   margin-top: 1rem;
 }
 
-.form_editor {
+.form {
   display: flex;
   flex-direction: column !important;
-  gap: 2rem;
+  gap: 1.3rem;
 }
 
-.form_editor label {
-  font-size: 1rem;
-  font-weight: 700;
+.form label {
+  font-size: 0.9rem;
+  font-weight: 900;
 }

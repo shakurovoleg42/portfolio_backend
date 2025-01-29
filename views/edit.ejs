@@ -15,7 +15,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Eni Standart Oil Admin Panel</title>
+    <title>Sellkon Admin Panel</title>
 
     <meta name="description" content="" />
 
@@ -76,7 +76,7 @@
           class="layout-menu menu-vertical menu bg-menu-theme"
         >
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="/" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <svg
                   width="25"
@@ -154,7 +154,7 @@
                 </svg>
               </span>
               <span class="app-brand-text demo menu-text fw-bolder ms-2"
-                >OLEG PRODUCTION</span
+                >Portfolio</span
               >
             </a>
 
@@ -233,7 +233,7 @@
                       action="/portfolio/update/<%= item.id %>"
                       method="POST"
                       enctype="multipart/form-data"
-                      class="form_editor"
+                      class="form"
                     >
                       <div>
                         <label for="title" class="form-label">Название:</label>
@@ -295,13 +295,16 @@
                           accept="image/*"
                         />
                         <!-- Показываем текущие изображения -->
-                        <% try { JSON.parse(item.images).forEach(image => { %>
+                        <% try { const images = JSON.parse(item.images); if
+                        (Array.isArray(images)) { images.forEach(image => { %>
                         <img
                           src="<%= image %>"
                           alt="Current Image"
                           style="width: 100px; height: auto; margin: 5px"
                         />
-                        <% }); } catch (e) { %>
+                        <% }); } else { %>
+                        <p>Invalid image data</p>
+                        <% } } catch (e) { %>
                         <p>Invalid image data</p>
                         <% } %>
                       </div>

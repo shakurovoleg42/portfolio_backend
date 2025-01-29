@@ -70,6 +70,7 @@ app.post("/portfolio", upload.array("images", 10), async (req, res) => {
 // Форма редактирования работы
 app.get("/portfolio/edit/:id", async (req, res) => {
   const { id } = req.params;
+  console.log(id);
 
   try {
     const item = await Portfolio.findById(id);
