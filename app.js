@@ -2,14 +2,16 @@ const express = require("express");
 const { connectDB } = require("./mongo");
 const bodyParser = require("body-parser");
 const path = require("path");
+const cors = require("cors"); // Import CORS middleware
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 // Подключение к MongoDB
 connectDB();
 
 // Middleware
+app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));

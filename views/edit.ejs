@@ -294,20 +294,22 @@
                           multiple
                           accept="image/*"
                         />
+
                         <!-- Показываем текущие изображения -->
-                        <% try { const images = JSON.parse(item.images); if
-                        (Array.isArray(images)) { images.forEach(image => { %>
+                        <% let images = []; try { images = (typeof item.images
+                        === "string") ? JSON.parse(item.images) : item.images; }
+                        catch (e) { images = []; } if (Array.isArray(images) &&
+                        images.length > 0) { images.forEach(function(image) { %>
                         <img
                           src="<%= image %>"
                           alt="Current Image"
                           style="width: 100px; height: auto; margin: 5px"
                         />
                         <% }); } else { %>
-                        <p>Invalid image data</p>
-                        <% } } catch (e) { %>
-                        <p>Invalid image data</p>
+                        <p>Нет изображений</p>
                         <% } %>
                       </div>
+
                       <button type="submit" class="btn btn-primary">
                         Сохранить
                       </button>
