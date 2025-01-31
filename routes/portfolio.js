@@ -71,17 +71,29 @@ router.post(
   upload.array("images", 10),
   async (req, res) => {
     const { id } = req.params;
-    const { title, description, technologies, list } = req.body;
-    const images = req.files.map((file) => `/uploads/${file.filename}`);
+    const { title, description, technologies, list, oldImages } = req.body;
+
+    // Получаем текущие изображения из старой записи (если они есть)
+    let images = [];
+
+    // Если были загружены новые изображения
+    if (req.files && req.files.length > 0) {
+      images = req.files.map((file) => `/uploads/${file.filename}`);
+    } else if (oldImages) {
+      // Если новых изображений нет, оставляем старые
+      images = JSON.parse(oldImages);
+    }
 
     try {
+      // Обновляем запись в базе данных
       await Portfolio.findByIdAndUpdate(id, {
         title,
         description,
         technologies: technologies.split(","),
         list: list.split(","),
-        images,
+        images, // Устанавливаем правильный массив изображений
       });
+
       res.redirect("/");
     } catch (err) {
       console.error("Error updating portfolio:", err);

@@ -295,20 +295,27 @@
                           accept="image/*"
                         />
 
-                        <!-- Показываем текущие изображения -->
-                        <% let images = []; try { images = (typeof item.images
-                        === "string") ? JSON.parse(item.images) : item.images; }
-                        catch (e) { images = []; } if (Array.isArray(images) &&
-                        images.length > 0) { images.forEach(function(image) { %>
-                        <img
-                          src="<%= image %>"
-                          alt="Current Image"
-                          style="width: 100px; height: auto; margin: 5px"
+                        <!-- Скрытое поле для хранения текущих изображений -->
+                        <input
+                          type="hidden"
+                          name="oldImages"
+                          value="<%= JSON.stringify(item.images) %>"
                         />
-                        <% }); } else { %>
-                        <p>Нет изображений</p>
-                        <% } %>
                       </div>
+
+                      <!-- Показываем текущие изображения -->
+                      <% let images = []; try { images = (typeof item.images ===
+                      "string") ? JSON.parse(item.images) : item.images; } catch
+                      (e) { images = []; } if (Array.isArray(images) &&
+                      images.length > 0) { images.forEach(function(image) { %>
+                      <img
+                        src="<%= image %>"
+                        alt="Current Image"
+                        style="width: 100px; height: auto; margin: 5px"
+                      />
+                      <% }); } else { %>
+                      <p>Нет изображений</p>
+                      <% } %>
 
                       <button type="submit" class="btn btn-primary">
                         Сохранить
