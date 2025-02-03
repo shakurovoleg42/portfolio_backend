@@ -2,7 +2,10 @@ const { Portfolio } = require("../mongo");
 
 const getAllPortfolios = async (req, res) => {
   try {
-    const portfolios = await Portfolio.find({});
+    const portfolios = await Portfolio.find(
+      {},
+      "title description images slug"
+    );
     res.json(portfolios);
   } catch (err) {
     console.error("Error fetching portfolios:", err);

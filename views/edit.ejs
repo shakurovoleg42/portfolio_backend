@@ -212,7 +212,7 @@
                   <i class="bx bx-search fs-4 lh-0"></i>
                   <input
                     type="text"
-                    class="form-control border-0 shadow-none"
+                    class="form-control border-1 shadow-none"
                     placeholder="Поиск"
                     aria-label=""
                   />
@@ -316,6 +316,20 @@
                       <% }); } else { %>
                       <p>Нет изображений</p>
                       <% } %>
+
+                      <div>
+                        <label for="linkToOriginal" class="form-label"
+                          >Ссылка на сайт:</label
+                        >
+                        <input
+                          class="form-control"
+                          id="linkToOriginal"
+                          name="linkToOriginal"
+                          value="<%= item.linkToOriginal %>"
+                          required
+                        ></input
+                        >
+                      </div>
 
                       <button type="submit" class="btn btn-primary">
                         Сохранить

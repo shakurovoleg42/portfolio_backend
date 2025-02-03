@@ -21,6 +21,7 @@ const portfolioSchema = new mongoose.Schema(
     slug: { type: String, unique: true },
     list: [String],
     images: [String],
+    linkToOriginal: String,
   },
   { collection: "portfolioDB" }
 );

@@ -32,7 +32,7 @@ router.get("/portfolio/add", (req, res) => {
 
 // Обработка формы добавления работы (Create)
 router.post("/portfolio", upload.array("images", 10), async (req, res) => {
-  const { title, description, technologies, list } = req.body;
+  const { title, description, technologies, list, linkToOriginal } = req.body;
   const images = req.files.map((file) => `/uploads/${file.filename}`);
 
   const portfolio = new Portfolio({
@@ -41,6 +41,7 @@ router.post("/portfolio", upload.array("images", 10), async (req, res) => {
     technologies: technologies.split(","),
     list: list.split(","),
     images,
+    linkToOriginal,
   });
 
   try {
@@ -71,7 +72,14 @@ router.post(
   upload.array("images", 10),
   async (req, res) => {
     const { id } = req.params;
-    const { title, description, technologies, list, oldImages } = req.body;
+    const {
+      title,
+      description,
+      technologies,
+      list,
+      oldImages,
+      linkToOriginal,
+    } = req.body;
 
     // Получаем текущие изображения из старой записи (если они есть)
     let images = [];
@@ -92,6 +100,7 @@ router.post(
         technologies: technologies.split(","),
         list: list.split(","),
         images, // Устанавливаем правильный массив изображений
+        linkToOriginal,
       });
 
       res.redirect("/");
