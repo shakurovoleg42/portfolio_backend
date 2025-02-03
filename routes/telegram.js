@@ -5,7 +5,6 @@ const rateLimit = require("express-rate-limit");
 
 const router = express.Router();
 
-// Получаем токен и chat_id из переменных окружения
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
@@ -26,8 +25,8 @@ const formLimiter = rateLimit({
 });
 
 const isSpam = (text) => {
-  const spamWords = ["http", "https", "spam", "casino", "free money"]; // Запрещенные слова
-  if (text.length < 5) return true; // Слишком короткие сообщения
+  const spamWords = ["http", "spam", "casino", "free money"];
+  if (text.length < 5) return true;
   return spamWords.some((word) => text.toLowerCase().includes(word));
 };
 
