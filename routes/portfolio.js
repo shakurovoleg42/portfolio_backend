@@ -8,8 +8,8 @@ const router = express.Router();
 // Получение всех работ (Read)
 router.get("/api/portfolio", async (req, res) => {
   try {
-    const portfolios = await Portfolio.findAll(); // Получаем все записи
-    res.json(portfolios);
+    const portfolio = await Portfolio.findAll(); // Получаем все записи
+    res.json(portfolio);
   } catch (err) {
     console.error("Error fetching portfolios:", err);
     res.status(500).send("Server Error");
@@ -36,10 +36,10 @@ router.get("/api/portfolio/:slug", async (req, res) => {
 // Главная страница (Read)
 router.get("/", async (req, res) => {
   try {
-    const portfolios = await Portfolio.findAll(); // Получаем все работы
-    res.render("index", { portfolios });
+    const portfolio = await Portfolio.findAll(); // Получаем все работы
+    res.render("index", { portfolio });
   } catch (err) {
-    console.error("Error fetching portfolios:", err);
+    console.error("Error fetching portfolio:", err);
     res.status(500).send("Server Error");
   }
 });

@@ -3,42 +3,54 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const sequelize = require("./config/db"); // Добавляем подключение к базе данных через Sequelize
+const sequelize = require("./config/db");
 
 const app = express();
 const port = process.env.PORT || 8080;
 
 // Middleware
-app.use(cors()); // Разрешаем CORS для всех маршрутов
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Устанавливаем EJS как шаблонизатор
+// EJS setup
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views")); // Явно указываем папку шаблонов
 
-// Подключаем роуты
+// Routes
 const portfolioRoutes = require("./routes/portfolio");
 const telegramBot = require("./routes/telegram");
 
 app.use("/", portfolioRoutes);
 app.use("/api/telegram", telegramBot);
 
-// Инициализация базы данных (синхронизация)
+// DB sync and server start
 sequelize
-  .sync({ force: false }) // Если хочешь пересоздать таблицы, укажи { force: true }
+  .authenticate()
   .then(() => {
-    console.log("Database connected successfully");
+    console.log("✅ PostgreSQL connection established.");
+    return sequelize.sync({ force: false }); // Создает таблицы, если не существуют
+  })
+  .then(() => {
+    console.log("✅ Models synchronized with DB.");
     app.listen(port, () => {
-      console.log(`🚀 Server is running on http://localhost:${port}`);
+      console.log(`🚀 Server running on http://localhost:${port}`);
     });
   })
   .catch((err) => {
-    console.error("Error connecting to database:", err);
+    console.error("❌ Error with database connection:", err);
+    process.exit(1);
   });
 
-// Error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
+  console.error("❌ Error:", err.stack);
+  res.status(500).json({ error: "Internal Server Error" });
 });
