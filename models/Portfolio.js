@@ -3,6 +3,11 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
 const Portfolio = sequelize.define("Portfolio", {
+  slug: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
   title: {
     type: DataTypes.STRING,
     allowNull: false,

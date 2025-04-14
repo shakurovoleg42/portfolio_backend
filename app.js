@@ -11,7 +11,7 @@ const port = process.env.PORT || 8080;
 // Middleware
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "*",
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -36,7 +36,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("✅ PostgreSQL connection established.");
-    return sequelize.sync({ force: false }); // Создает таблицы, если не существуют
+    return sequelize.sync({ force: true }); // Создает таблицы, если не существуют
   })
   .then(() => {
     console.log("✅ Models synchronized with DB.");

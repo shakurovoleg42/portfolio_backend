@@ -1,61 +1,47 @@
-// routes/portfolio.js
 const express = require("express");
 const upload = require("../config/multer");
-const Portfolio = require("../models/Portfolio"); // Модель для работы с PostgreSQL
+const Portfolio = require("../models/Portfolio");
 
 const router = express.Router();
 
-// Получение всех работ (Read)
+// 📄 Получение всех работ
 router.get("/api/portfolio", async (req, res) => {
   try {
-    const portfolio = await Portfolio.findAll(); // Получаем все записи
-    res.json(portfolio);
+    const portfolio = await Portfolio.findAll();
+    res.render("index", { portfolio }); // отрисовываем EJS
   } catch (err) {
     console.error("Error fetching portfolios:", err);
     res.status(500).send("Server Error");
   }
 });
 
-// Получение работы по slug
-router.get("/api/portfolio/:slug", async (req, res) => {
+// 🟢 Получение работы по slug
+router.get("/api/portfolio/slug/:slug", async (req, res) => {
   const { slug } = req.params;
   try {
-    const portfolio = await Portfolio.findOne({
-      where: { slug },
-    });
-    if (!portfolio) {
-      return res.status(404).send("Portfolio not found");
-    }
+    const portfolio = await Portfolio.findOne({ where: { slug } });
+    if (!portfolio) return res.status(404).send("Portfolio not found");
     res.json(portfolio);
+    console.log("Portfolio found:", portfolio);
   } catch (err) {
     console.error("Error fetching portfolio:", err);
     res.status(500).send("Server Error");
   }
 });
 
-// Главная страница (Read)
-router.get("/", async (req, res) => {
-  try {
-    const portfolio = await Portfolio.findAll(); // Получаем все работы
-    res.render("index", { portfolio });
-  } catch (err) {
-    console.error("Error fetching portfolio:", err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Форма добавления работы (Create)
-router.get("/portfolio/add", (req, res) => {
+// ➕ Форма добавления работы
+router.get("/api/portfolio/add", (req, res) => {
   res.render("create");
 });
 
-// Обработка формы добавления работы (Create)
-router.post("/portfolio", upload.array("images", 10), async (req, res) => {
-  const { title, description, technologies, list, linkToOriginal } = req.body;
+// ✅ Обработка добавления
+router.post("/api/portfolio", upload.array("images", 10), async (req, res) => {
+  const { slug, title, description, technologies, list, linkToOriginal } =
+    req.body;
   const images = req.files.map((file) => `/uploads/${file.filename}`);
-
   try {
-    const portfolio = await Portfolio.create({
+    await Portfolio.create({
+      slug: title.toLowerCase().replace(/\s+/g, "-"),
       title,
       description,
       technologies: technologies.split(","),
@@ -63,22 +49,19 @@ router.post("/portfolio", upload.array("images", 10), async (req, res) => {
       images,
       linkToOriginal,
     });
-    res.redirect("/");
+    res.redirect("/api/portfolio");
   } catch (err) {
     console.error("Error adding portfolio:", err);
     res.status(500).send("Server Error");
   }
 });
 
-// Форма редактирования работы
-router.get("/portfolio/edit/:id", async (req, res) => {
+// ✏️ Форма редактирования
+router.get("/api/portfolio/edit/:id", async (req, res) => {
   const { id } = req.params;
-
   try {
-    const item = await Portfolio.findByPk(id); // Поиск по ID
-    if (!item) {
-      return res.status(404).send("Portfolio not found");
-    }
+    const item = await Portfolio.findByPk(id);
+    if (!item) return res.status(404).send("Portfolio not found");
     res.render("edit", { item });
   } catch (err) {
     console.error("Error fetching portfolio:", err);
@@ -86,9 +69,9 @@ router.get("/portfolio/edit/:id", async (req, res) => {
   }
 });
 
-// Обновление работы (Update)
+// ♻️ Обновление
 router.post(
-  "/portfolio/update/:id",
+  "/api/portfolio/update/:id",
   upload.array("images", 10),
   async (req, res) => {
     const { id } = req.params;
@@ -120,7 +103,7 @@ router.post(
         },
         { where: { id } }
       );
-      res.redirect("/");
+      res.redirect("/api/portfolio");
     } catch (err) {
       console.error("Error updating portfolio:", err);
       res.status(500).send("Server Error");
@@ -128,16 +111,53 @@ router.post(
   }
 );
 
-// Удаление работы (Delete)
-router.post("/portfolio/delete/:id", async (req, res) => {
+// ❌ Удаление
+router.post("/api/portfolio/delete/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
     await Portfolio.destroy({ where: { id } });
-    res.redirect("/");
+    res.redirect("/api/portfolio");
   } catch (err) {
     console.error("Error deleting portfolio:", err);
     res.status(500).send("Server Error");
+  }
+});
+
+// 📄 Получить все работы (JSON)
+router.get("/api/json/portfolio", async (req, res) => {
+  try {
+    const data = await Portfolio.findAll();
+    res.json(data);
+  } catch (err) {
+    console.error("JSON API error (get all):", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// 🔍 Получить одну работу по ID (JSON)
+router.get("/api/json/portfolio/:id", async (req, res) => {
+  try {
+    const item = await Portfolio.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ error: "Not found" });
+    res.json(item);
+  } catch (err) {
+    console.error("JSON API error (get by ID):", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// 🔎 Получить одну работу по slug (JSON)
+router.get("/api/json/portfolio/slug/:title", async (req, res) => {
+  try {
+    const item = await Portfolio.findOne({
+      where: { title: req.params.title },
+    });
+    if (!item) return res.status(404).json({ error: "Not found" });
+    res.json(item);
+  } catch (err) {
+    console.error("JSON API error (get by slug):", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
