@@ -16,8 +16,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "10mb" }));
 
 // Статика (для фронта и изображений)
 app.use(express.static(path.join(__dirname, "public"))); // общий доступ ко всему public
